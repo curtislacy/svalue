@@ -1,0 +1,32 @@
+{
+  "name": "svalue",
+  "version": "0.0.1",
+  "description": "Provide valuations for cryptoassets, based on existing markets.",
+  "main": "server.js",
+  "engines": {
+    "node": "0.10.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/curtislacy/svalue.git"
+  },
+  "keywords": [
+    "mastercoin",
+    "bitcoin",
+    "counterparty",
+    "poloniex"
+  ],
+  "author": "Curtis Lacy",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "cheerio": "~0.15.0",
+    "net.http-client": "~0.2.1",
+    "ramda": "~0.2.4",
+    "lambdajs": "~1.0.1",
+    "data.future": "~2.2.0",
+    "data.validation": "~1.2.0",
+    "data.either": "~1.1.0",
+    "data.maybe": "~1.0.3"
+  }
+}
