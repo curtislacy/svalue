@@ -51,17 +51,25 @@ var Exchanges = {
 	}
 }
 
-async.mapSeries( Object.keys( Exchanges ), 
-	function( exchange, doneExchange ) {
-		async.map( Object.keys( Exchanges[ exchange ].currencies ),
-			function( baseCurrency, doneBaseCurrency ) {
-				async.map( Object.keys( Exchanges[ exchange ].currencies ),
-					function( tradedCurrency, doneTradedCurrency ) {
-						Exchanges[ exchange ].interface.orderBook( 
-							Exchanges[ exchange ].currencies[ baseCurrency ], 
-							Exchanges[ exchange ].currencies[ tradedCurrency ], 
+async.reduce( Object.keys( Exchanges ), {},
+	function( memo, exchangeName, doneExchange ) {
+		var exchange = Exchanges[ exchangeName ];
+		async.reduce( Object.keys( exchange.currencies ), memo,
+			function( memo, baseCurrency, doneBaseCurrency ) {
+				async.reduce( Object.keys( exchange.currencies ), memo,
+					function( memo, tradedCurrency, doneTradedCurrency ) {
+						exchange.interface.orderBook( 
+							exchange.currencies[ baseCurrency ], 
+							exchange.currencies[ tradedCurrency ], 
 							function( error, result ) {
-								doneTradedCurrency( null, result );
+								if( !error && result )
+								{
+									if( !memo[ exchangeName ]) memo[ exchangeName ] = {};
+									if( !memo[ exchangeName ][ baseCurrency ])
+										memo[ exchangeName ][ baseCurrency ] = {};
+									memo[ exchangeName ][ baseCurrency ][ tradedCurrency ] = result;
+								}
+								doneTradedCurrency( null, memo );
 							} );
 					},
 					function( error, baseCurrencyResults ) {
