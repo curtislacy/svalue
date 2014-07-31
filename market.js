@@ -52,8 +52,8 @@ MasterXchange.prototype.translateOrderBook = function( orderBook ) {
 	};
 
 	_.reduce( orderBook, function( ball, flake ) {
-		if( flake.type === 'buy' ) ball.bid.push( _.pick( flake, [ 'price', 'amount' ]));
-		else if( flake.type === 'sell' ) ball.ask.push( _.pick( flake, [ 'price', 'amount' ]));
+		if( flake.type === 'buy' ) ball.bid.push( _.mapValues( _.pick( flake, [ 'price', 'amount' ]), parseFloat ));
+		else if( flake.type === 'sell' ) ball.ask.push( _.mapValues( _.pick( flake, [ 'price', 'amount' ]), parseFloat ));
 		return ball;
 	}, result );
 
@@ -83,6 +83,31 @@ var Exchanges = {
 			'MSC_XAP': 'xap'
 		}
 	}
+}
+
+function sumOrders( data, amount ) {
+	if( amount == 0 )
+		return 0;
+
+	var totalPrice = 0;
+	var accumulator = 0;
+
+	for( var n = 0; ( n < data.length ) && ( accumulator < amount ); n++ )
+	{
+		var orderAmount = data[ n ].amount < amount - accumulator ? data[ n ].amount : amount - accumulator;
+		totalPrice += orderAmount * data[ n ].price;
+		accumulator += orderAmount;
+	}
+
+	return accumulator >= orderAmount ? totalPrice : 'Not Available';
+}
+
+function liquidValue( orderBook, amount ) {
+	return sumOrders( orderBook.bid, amount );
+}
+
+function purchasePrice( orderBook, amount ) {
+	return sumOrders( orderBook.ask, amount );
 }
 
 async.reduce( Object.keys( Exchanges ), {},
@@ -116,7 +141,41 @@ async.reduce( Object.keys( Exchanges ), {},
 			});
 	},
 	function( error, allResults ) {
-		console.log( allResults.MasterXchange.BTC.MSC_MAID );
+
+		console.log( '1/10 oz Gold Eagle Sale Market' );
+		for( var n=0; n<=10; n++ )
+			console.log( n + ' GOLDDTT: ' + liquidValue( allResults.Poloniex.BTC.XCP_GOLDDTT, n ) + ' BTC' );
+
+		console.log();
+
+		console.log( 'MaidSafeCoin Sale Markets' );
+		for( var n=1; n < 300000; n *= 2 )
+			console.log( n + ' MAID: ' + 
+				liquidValue( allResults.MasterXchange.BTC.MSC_MAID, n ) + ' BTC(MX), ' +  
+				liquidValue( allResults.Poloniex.BTC.MSC_MAID, n ) + ' BTC(PX)' );
+
+		console.log();
+
+		console.log( 'APICoin Sale Markets' );
+		for( var n=1; n < 300000; n *= 2 )
+			console.log( n + ' XAP: ' + 
+				liquidValue( allResults.MasterXchange.BTC.MSC_XAP, n ) + ' BTC(MX), ' +  
+				liquidValue( allResults.Poloniex.BTC.MSC_XAP, n ) + ' BTC(PX)' );
+
+		console.log();
+
+		console.log( 'MaidSafeCoin Arbitrage Opportunity (1)?')
+		for( var n=1; n < 300000; n *= 2 )
+			console.log( n + ' MAID: ' + 
+				purchasePrice( allResults.MasterXchange.BTC.MSC_MAID, n ) + ' BTC(MX Buy), ' +  
+				liquidValue( allResults.Poloniex.BTC.MSC_MAID, n ) + ' BTC(PX Sale)' );
+
+		console.log();
+		console.log( 'MaidSafeCoin Arbitrage Opportunity (2)?')
+		for( var n=1; n < 300000; n *= 2 )
+			console.log( n + ' MAID: ' + 
+				liquidValue( allResults.MasterXchange.BTC.MSC_MAID, n ) + ' BTC(MX Sale), ' +  
+				purchasePrice( allResults.Poloniex.BTC.MSC_MAID, n ) + ' BTC(PX Buy)' );
 	}
 );
 
