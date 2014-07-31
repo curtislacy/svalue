@@ -8,7 +8,7 @@ Example
 
 Run ```node market.js``` in order to download data and perform some simple analysis.  What follows is the output when I ran the tool today, along with some brief analysis.
 
-``bash
+```bash
 Crispin:svalue cmlacy$ node ./market.js 
 1/10 oz Gold Eagle Sale Market
 0 GOLDDTT: 0 BTC
@@ -22,9 +22,9 @@ Crispin:svalue cmlacy$ node ./market.js
 8 GOLDDTT: 0.5939700203611292 BTC
 9 GOLDDTT: 0.5941027703611292 BTC
 10 GOLDDTT: 0.5942355203611293 BTC
-``
+```
 This is a simple market depth examination.  Suppose you have 10 GOLDDTT tokens, representing 10 1/10oz Gold Eagle coins.  The spot price for gold would place their value somewhere around 2.5BTC, but these tokens are only currently traded on Poloniex, which results in a relatively shallow market.  As we see above, there are really only enough open orders to make it worth selling 2 or 3 of the tokens at this time.  Beyond that, the only buy orders active in the market are for very low prices.  While we COULD sell our tokens, they would command a very low price.
-``bash
+```bash
 MaidSafeCoin Sale Markets
 1 MAID: 0.0000435 BTC(MX), 0.00004417 BTC(PX)
 2 MAID: 0.000087 BTC(MX), 0.00008834 BTC(PX)
@@ -45,9 +45,9 @@ MaidSafeCoin Sale Markets
 65536 MAID: 2.77101825 BTC(MX), 2.67597417 BTC(PX)
 131072 MAID: 5.33005857 BTC(MX), 5.08947277 BTC(PX)
 262144 MAID: 10.12371329 BTC(MX), 5.20530441 BTC(PX)
-``
+```
 This is a look at a token traded on two exchanges, MaidSafeCoin.  We can see that tokens command a slightly higher price on Poloniex, but only in very small amounts.  The market is much deeper on MasterXchange, so if you want to sell more tokens, that's the place to do it.  If you're just looking to liquidate a few tokens over time, you may be able to get higher returns on Poloniex.
-``bash
+```bash
 APICoin Sale Markets
 1 XAP: 1.1e-7 BTC(MX), 0.00004201 BTC(PX)
 2 XAP: 2.2e-7 BTC(MX), 0.00008402 BTC(PX)
@@ -68,9 +68,9 @@ APICoin Sale Markets
 65536 XAP: 0.00165536 BTC(MX), 0.183754675165681 BTC(PX)
 131072 XAP: 0.0021000000000000003 BTC(MX), 0.183754675165681 BTC(PX)
 262144 XAP: 0.0021000000000000003 BTC(MX), 0.183754675165681 BTC(PX)
-``
+```
 Here's the same comparison with a newer coin, APICoin.  In this case, XAP has been listed on Poloniex for some time, and the market only opened on MasterXchange yesterday.  As a result, you can sell XAP for a much higher price on Poloniex than on MasterXchange.  However, XAP is a newer coin and demand is still low, so there's not real gain in selling more than a few thousand of them.
-``bash
+```bash
 MaidSafeCoin Arbitrage Opportunity (1)?
 1 MAID: 0.00004725 BTC(MX Buy), 0.00004417 BTC(PX Sale)
 2 MAID: 0.0000945 BTC(MX Buy), 0.00008834 BTC(PX Sale)
@@ -112,5 +112,5 @@ MaidSafeCoin Arbitrage Opportunity (2)?
 65536 MAID: 2.77101825 BTC(MX Sale), 3.17407454 BTC(PX Buy)
 131072 MAID: 5.33005857 BTC(MX Sale), 6.522292439999999 BTC(PX Buy)
 262144 MAID: 10.12371329 BTC(MX Sale), 13.970709089999998 BTC(PX Buy)
-``
+```
 In this last case, we take a look at both buy and sell orders on the two exchanges.  There's potentially an opportunity for immediate profit if it's possible to purchase tokens on one exchange for a price lower than they could be sold on another (though these opportunities generally pass very quickly due to automated trading systems).  Right now, we see that the purchase price for various numbers of tokens is consistently higher than the sale price for the same number of tokens on the other exchange, so no opportunity for instantaneous arbitrage exists. (Unsurprising)
