@@ -17,6 +17,21 @@ Poloniex.prototype.orderBook = function( baseCurrency, tradedCurrency, done ) { 
 			}
 		) : 
 		done( new Error( 'Two currencies must be provided.' ));
+};
+Poloniex.prototype.translateOrderBook = function( orderBook ) {
+	function translate( side ) {
+		return _.map( side, function( item ) {
+			return {
+				'price': item[0],
+				'amount': item[1]
+			}
+		})
+	}
+
+	return { 
+		'ask': _.sortBy( translate( orderBook.asks ), 'price' ),
+		'bid': _.sortBy( translate( orderBook.bids ), function( a ) { return -a.price; } )
+	};
 }
 
 function MasterXchange() {};
@@ -28,6 +43,24 @@ MasterXchange.prototype.orderBook = function( baseCurrency, tradedCurrency, done
 			}
 		) :
 		done( new Error( 'Two currencies must be provided, and baseCurrency must be BTC' ));
+};
+MasterXchange.prototype.translateOrderBook = function( orderBook ) {
+
+	var result = {
+		ask: [],
+		bid: []
+	};
+
+	_.reduce( orderBook, function( ball, flake ) {
+		if( flake.type === 'buy' ) ball.bid.push( _.pick( flake, [ 'price', 'amount' ]));
+		else if( flake.type === 'sell' ) ball.ask.push( _.pick( flake, [ 'price', 'amount' ]));
+		return ball;
+	}, result );
+
+	return {
+		'ask': _.sortBy( result.ask, 'price' ),
+		'bid': _.sortBy( result.bid, function( a ) { return -a.price; } ),
+	};
 }
 
 var Exchanges = {
@@ -46,7 +79,8 @@ var Exchanges = {
 		'currencies': {
 			'BTC': 'BTC',
 			'MSC': 'msc',
-			'MSC_MAID': 'maid'			
+			'MSC_MAID': 'maid',
+			'MSC_XAP': 'xap'
 		}
 	}
 }
@@ -67,7 +101,8 @@ async.reduce( Object.keys( Exchanges ), {},
 									if( !memo[ exchangeName ]) memo[ exchangeName ] = {};
 									if( !memo[ exchangeName ][ baseCurrency ])
 										memo[ exchangeName ][ baseCurrency ] = {};
-									memo[ exchangeName ][ baseCurrency ][ tradedCurrency ] = result;
+									memo[ exchangeName ][ baseCurrency ][ tradedCurrency ] = 
+										exchange.interface.translateOrderBook( result );
 								}
 								doneTradedCurrency( null, memo );
 							} );
@@ -81,7 +116,7 @@ async.reduce( Object.keys( Exchanges ), {},
 			});
 	},
 	function( error, allResults ) {
-		console.log( allResults );
+		console.log( allResults.MasterXchange.BTC.MSC_MAID );
 	}
 );
 
